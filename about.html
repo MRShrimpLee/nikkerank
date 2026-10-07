@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>关于本命测试 | 胜利女神：NIKKE 妮姬喜好排序</title>
+<meta name="description" content="妮姬喜好排序器的算法说明、数据来源与版权信息。">
+<link rel="icon" href="assets/logo/favicon.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <nav class="navbar">
+    <a class="brand" href="index.html"><span class="brand-mark">NK</span>妮姬喜好排序</a>
+    <div class="nav-links">
+      <a href="index.html">主页</a>
+      <a href="about.html" class="active">关于</a>
+      <a href="uplog.html">更新日志</a>
+    </div>
+  </nav>
+  <div class="banner">
+    <h1>关于本命测试</h1>
+    <p class="sub">算法、数据来源与版权说明</p>
+  </div>
+</header>
+
+<main class="container doc">
+  <div class="section">
+    <h2>这是什么</h2>
+    <p>
+      这是一个「二择」式的妮姬喜好排序器：每次只给你两位妮姬，你只要点击更喜欢的那一位，
+      若干轮之后就能得到你的前 N 名排行。相比直接给两百多位妮姬打分，这种两两比较的方式
+      更轻松，也更接近你真实的直觉。
+    </p>
+    <p>
+      本站与 <a href="https://github.com/MRShrimpLee/arknrank" target="_blank" rel="noopener">明日方舟干员喜好排序</a>
+      是同一个系列，排序引擎完全相同，都源自
+      <a href="https://github.com/uzkk/favorite" target="_blank" rel="noopener">uzkk/favorite</a>（MIT 协议，作者 Shigma），
+      按妮姬的数据结构重做了筛选维度与卡片展示。整站是<b>零构建静态站点</b>：没有框架、没有构建步骤，
+      双击 <code>index.html</code> 就能运行，也可以直接托管在 GitHub Pages 上。
+    </p>
+
+    <h2>关于算法</h2>
+    <p>
+      排序原理是 <a href="https://en.wikipedia.org/wiki/Pairwise_comparison" target="_blank" rel="noopener">Pairwise Comparison</a>（两两比较）。
+      每答一题，胜者保留在候选池中，败者被挂到胜者名下，形成一棵二叉树；
+      当候选池只剩一位时，它就是第 1 名，然后沿着树继续向下钻取，依次确定第 2、3…… 名。
+    </p>
+    <pre><code>总轮数 ≈ (N − 1) + (排名数 − 1) × log₂N</code></pre>
+    <p>
+      例如从 205 名妮姬中排出前 10 名约需 310 轮，前 1 名约需 204 轮；而两两全比需要
+      205 × 204 ÷ 2 = 20910 轮。设置页会直接给出当前配置的预计轮数。
+      根据选择的先后顺序，结果可能会略有不同；这也是「本命测试」的乐趣所在。
+    </p>
+
+    <h3>偏好分析的算法</h3>
+    <p>
+      从你的前 <span class="formula">m</span> 名出发，对每个标签 <span class="formula">k</span>：
+    </p>
+    <pre><code>你的占比  S_k = Σ（前 m 名中带标签 k 的角色权重） / Σ（全部权重），权重 w_i = 1 / (1 + i)
+全体占比  B_k = 参测角色中带标签 k 的人数 / 参测人数
+参考值    w_k = S_k − B_k</code></pre>
+    <p>
+      参考值大于 0 表示你比随机情况更偏爱这个标签；≥ 0.2 的标签会作为「XX 控」显示出来。
+      排名少于 7 名时不做统计。这里的标签取自每位妮姬的 <b>所属部队、企业、职业、武器与属性</b>——
+      所以「XX 控」可能是「宙斯盾部队控」「发射器控」「朝圣者控」这类。
+    </p>
+
+    <h2>收录范围</h2>
+    <ul>
+      <li>共收录 <b id="total-ops">205</b> 名妮姬，取自 GameKee 妮姬百科的「角色图鉴」（含全球服已实装角色与联动角色）。</li>
+      <li>角色卡片使用百科的角色图（游戏内卡片样式，自带元素/职业/爆裂图标），本地打包，离线可用。</li>
+      <li>可筛选维度：
+        <b>稀有度</b>（SSR 173 / SR 20 / R 12）、
+        <b>职业</b>（火力型 88 / 防御型 40 / 辅助型 77）、
+        <b>企业</b>（泰特拉 58 / 极乐净土 52 / 米西利斯 44 / 反常 28 / 朝圣者 23）、
+        <b>爆裂阶段</b>（一阶 57 / 二阶 65 / 三阶 82 / 通用 1）、
+        <b>武器</b>（发射器 / 狙击步枪 / 步枪 / 冲锋枪 / 霰弹枪 / 机枪）、
+        <b>属性</b>（水冷 / 燃烧 / 铁甲 / 电击 / 风压）。</li>
+      <li>可以勾选「<b>去除联动角色</b>」，一次排除 24 名来自其他作品 IP 的角色。</li>
+    </ul>
+
+    <h2>联动角色（24 名 / 9 个 IP）</h2>
+    <ul>
+      <li><b>新世纪福音战士</b>（7）：明日香、零、真理、美里、樱、明日香：WILLE、零 (暂称)</li>
+      <li><b>NieR:Automata</b>（3）：2B、A2、帕斯卡</li>
+      <li><b>电锯人</b>（3）：玛奇玛、帕瓦、姬野</li>
+      <li><b>Lycoris Recoil</b>（3）：千束、泷奈、胡桃</li>
+      <li><b>生化危机</b>（3）：吉儿、艾达、克莱尔</li>
+      <li><b>Re:从零开始的异世界生活</b>（2）：爱蜜莉雅、雷姆</li>
+      <li><b>女神异闻录</b>（3）：QUEEN（真）／埃癸斯／雪子</li>
+    </ul>
+    <p class="comment">判定依据是百科里的「部队」字段（寄叶 / 恶魔猎人 / NERV / WILLE / 莉可莉可咖啡厅 / 爱蜜莉雅阵营 / B.S.T / 心之怪盗团 / 特别课外活动部 / 自称特别搜查队）。</p>
+
+    <h2>数据来源</h2>
+    <ul>
+      <li>角色数据与头像：<a href="https://www.gamekee.com/nikke/second/64599" target="_blank" rel="noopener">GameKee 妮姬百科 · 角色图鉴</a>
+        （每个角色页的结构化资料：稀有度 / 职业 / 企业 / 爆裂阶段 / 武器 / 属性 / 部队 / CV / 实装日期）。</li>
+      <li>数据规整（都记录在 <code>tools/report.json</code> 里）：
+        <ul>
+          <li>4 名「超标准」角色的企业名带后缀（如「米西利斯（超标准）」），已统一为企业本体并保留 <code>overflow</code> 标记；</li>
+          <li>1 名角色的属性百科写作「雷电」，已统一为「电击」（游戏内只有 5 种属性）；</li>
+          <li>3 名角色（马斯特、爱德、爱丽丝：仙境兔女郎）的职业百科写作「支援型」，
+            而百科自身的筛选器只有 火力型/防御型/辅助型 三类，已统一为「辅助型」。</li>
+        </ul>
+      </li>
+      <li>更新方式：在项目根目录执行 <code>python tools/gen_data.py</code> 与
+        <code>python tools/fetch_avatars.py</code>，会增量抓取新角色与缺失头像。</li>
+    </ul>
+
+    <h2>使用提示</h2>
+    <ul>
+      <li>把鼠标移到卡片上可以看到角色名、所属部队、职业 / 稀有度 / 阶段 / 属性。</li>
+      <li>点错了可以按「等下，选错了……」或键盘 <code>Backspace</code> 退回上一题。</li>
+      <li>键盘快捷键：<code>1</code> / <code>←</code> 选左边，<code>2</code> / <code>→</code> 选右边，<code>R</code> 本题随机。</li>
+      <li>对某位妮姬不感兴趣，可以用「不再出现左边的角色」把她从后续题目中剔除。</li>
+      <li>设置会记在浏览器本地（localStorage），下次打开会恢复上次的选择。</li>
+    </ul>
+
+    <h2>版权与协议</h2>
+    <ul>
+      <li>排序引擎移植自 <a href="https://github.com/uzkk/favorite" target="_blank" rel="noopener">uzkk/favorite</a>，MIT 协议，作者 Shigma。</li>
+      <li>本站代码同样以 MIT 协议开源；脚本的使用、修改、复制都是免费的。</li>
+      <li>角色数据与图片来自 GameKee 社区百科，仅供学习与交流使用。</li>
+      <li>《胜利女神：NIKKE》及其角色版权归 SHIFT UP Corp. / Level Infinite 所有，本站为非商业同人作品。</li>
+    </ul>
+
+    <p><a href="index.html">← 点此返回测试页面</a></p>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <p>妮姬喜好排序 · 基于 <a href="https://github.com/uzkk/favorite" target="_blank" rel="noopener">uzkk/favorite</a> 引擎的零构建静态站点</p>
+</footer>
+
+<script src="js/data.js"></script>
+<script>
+  (function () {
+    var el = document.getElementById('total-ops')
+    if (el && window.AK_DATA && window.AK_DATA.meta) el.textContent = window.AK_DATA.meta.total
+  })()
+</script>
+</body>
+</html>

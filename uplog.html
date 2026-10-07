@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>更新日志 | 胜利女神：NIKKE 妮姬喜好排序</title>
+<link rel="icon" href="assets/logo/favicon.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <nav class="navbar">
+    <a class="brand" href="index.html"><span class="brand-mark">NK</span>妮姬喜好排序</a>
+    <div class="nav-links">
+      <a href="index.html">主页</a>
+      <a href="about.html">关于</a>
+      <a href="uplog.html" class="active">更新日志</a>
+    </div>
+  </nav>
+  <div class="banner">
+    <h1>更新日志</h1>
+    <p class="sub">版本与改动记录</p>
+  </div>
+</header>
+
+<main class="container doc">
+  <div class="section">
+    <h2>1.0.0</h2>
+    <ul>
+      <li>首个版本：以「明日方舟干员喜好排序」为模板做的妮姬版，排序引擎（<code>js/engine.js</code>）完全复用。</li>
+      <li>收录 <b>205</b> 名妮姬：中文名、稀有度、职业、企业、爆裂阶段、武器、属性、部队、CV、实装日期，以及 512 级别以内的角色卡片图。</li>
+      <li>筛选树支持 6 个维度：稀有度 / 职业 / 企业 / 爆裂阶段 / 武器 / 属性，可任意组合，另有「去除联动角色」开关（24 名 / 9 个 IP）。</li>
+      <li>结果页提供前 N 名排行、完整结果表（可一键复制）与偏好分析（按部队/企业/职业/武器/属性统计）。</li>
+      <li>键盘快捷键、触屏常显角色名、设置记忆（localStorage）、题量预估。</li>
+      <li>数据由 <code>tools/gen_data.py</code> 从 GameKee 妮姬百科抓取生成，<code>tools/fetch_avatars.py</code> 增量下载头像。</li>
+      <li>测试 <code>tools/test_engine.js</code> 覆盖排序正确性、题量上下界、回退/剔除/随机、数据集完整性等。</li>
+    </ul>
+
+    <h2>如何更新角色数据</h2>
+    <pre><code>python tools/gen_data.py        # 重新生成 js/data.js（增量缓存，只抓新角色）
+python tools/fetch_avatars.py   # 增量下载缺失的头像</code></pre>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <p>妮姬喜好排序 · 基于 <a href="https://github.com/uzkk/favorite" target="_blank" rel="noopener">uzkk/favorite</a> 引擎的零构建静态站点</p>
+</footer>
+</body>
+</html>

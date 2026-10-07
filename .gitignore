@@ -1,0 +1,15 @@
+# 生成物与缓存（可用 tools/ 下的脚本重新生成）
+tools/.cache/
+tools/characters.json
+tools/report.json
+tools/missing_avatars.json
+
+# 本地开发用的预览页与截图
+_preview.html
+_mobile.html
+_shots/
+
+# 系统文件
+Thumbs.db
+Desktop.ini
+.DS_Store

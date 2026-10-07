@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>胜利女神：NIKKE 妮姬喜好排序 | 二择本命测试</title>
+<meta name="description" content="胜利女神：NIKKE 妮姬喜好排序器：通过两两二择的方式，从 205 名妮姬中找出你的本命与前 N 名排行。">
+<meta name="theme-color" content="#0c0a10">
+<link rel="icon" href="assets/logo/favicon.png">
+<link rel="apple-touch-icon" href="assets/logo/512x512.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <nav class="navbar">
+    <a class="brand" href="index.html"><span class="brand-mark">NK</span>妮姬喜好排序</a>
+    <div class="nav-links">
+      <a href="index.html" class="active">主页</a>
+      <a href="about.html">关于</a>
+      <a href="uplog.html">更新日志</a>
+    </div>
+  </nav>
+  <div class="banner">
+    <h1>胜利女神：NIKKE 妮姬喜好排序</h1>
+    <p class="sub">二择测试 · 从 <span id="op-count">205</span> 名妮姬中，找出你的本命</p>
+  </div>
+</header>
+
+<main id="app" class="container">
+  <div class="section"><p>正在加载妮姬数据……</p></div>
+</main>
+
+<footer class="site-footer">
+  <p>排序引擎移植自 <a href="https://github.com/uzkk/favorite" target="_blank" rel="noopener">uzkk/favorite</a>（MIT，作者 Shigma）；角色数据与头像来自 <a href="https://www.gamekee.com/nikke/second/64599" target="_blank" rel="noopener">GameKee 妮姬百科</a>。</p>
+  <p>《胜利女神：NIKKE》及其角色版权归 SHIFT UP Corp. / Level Infinite 所有，本站为非商业同人作品。</p>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/app.js"></script>
+<script>
+  (function () {
+    var el = document.getElementById('op-count')
+    if (el && window.AK_DATA && window.AK_DATA.meta) el.textContent = window.AK_DATA.meta.total
+  })()
+</script>
+</body>
+</html>

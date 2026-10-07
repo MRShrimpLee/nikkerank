@@ -1,0 +1,33 @@
+MIT License
+
+Copyright (c) 2019 Shigma (uzkk/favorite) —— 排序引擎（SortNode / BackupTree / Sorter 等）
+Copyright (c) 2026 nikkerank contributors —— 妮姬版的移植、数据与界面
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+附注：`js/engine.js` 与 `tools/test_engine.js` 是对
+https://github.com/uzkk/favorite （MIT，作者 Shigma）中
+`lib/utils/SortNode.ts`、`lib/utils/BackupTree.ts`、`lib/utils/sort.mixin.ts`
+的 JavaScript 移植，遵循同一协议。
+
+本项目收录的角色名称、图片等素材来自 GameKee 社区百科，版权归
+SHIFT UP Corp. / Level Infinite 所有，不属于上述代码许可的授权范围；
+本项目为非商业同人作品。
