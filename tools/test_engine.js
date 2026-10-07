@@ -183,6 +183,25 @@ section('6. 数据集完整性')
     '实际 ' + (DATA.collabSources || []).length)
   check('非联动角色的 collabName 为空', CHARS.filter(c => !c.collab).every(c => !c.collabName))
 
+  // 异格 / 换皮
+  const variants = CHARS.filter(c => c.variant)
+  check('异格（同名换皮）角色 47 名', variants.length === 47, '实际 ' + variants.length)
+  check('每个异格都有本体名', variants.every(c => c.baseNameRaw))
+  check('每个异格的本体都在数据集里（baseId 能找到）',
+    variants.every(c => c.baseId > 0 && CHARS.some(x => x.id === c.baseId)),
+    variants.filter(c => !c.baseId).map(c => c.name).join('、'))
+  check('本体角色没有被误标为异格',
+    CHARS.filter(c => !c.variant).every(c => !c.baseNameRaw && c.baseId === 0))
+  check('去除异格后剩余 158 名本体', CHARS.filter(c => !c.variant).length === 158,
+    '实际 ' + CHARS.filter(c => !c.variant).length)
+  check('名字不含重名（换皮靠「：」区分）',
+    new Set(CHARS.map(c => c.name)).size === CHARS.length)
+  check('带全角冒号的角色都被标为异格',
+    CHARS.filter(c => c.name.indexOf('：') >= 0).every(c => c.variant))
+  check('安妮：奇迹仙女 的本体指向 N102',
+    (() => { const v = CHARS.find(c => c.name === '安妮：奇迹仙女'); const b = CHARS.find(c => c.name === 'N102')
+      return v && b && v.baseNameRaw === 'N102' && v.baseId === b.id })())
+
   // 头像
   const dir = path.join(__dirname, '..', 'assets', 'portraits')
   const files = fs.readdirSync(dir).filter(f => f.endsWith('.png'))

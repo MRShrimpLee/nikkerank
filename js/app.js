@@ -46,7 +46,7 @@
    * 设置项（记忆到 localStorage）
    * ------------------------------------------------------------------ */
   function defaultSettings () {
-    var s = { excludeCollab: false, ranknum: 10 }
+    var s = { excludeCollab: false, excludeVariant: false, ranknum: 10 }
     DIMENSIONS.forEach(function (d) { s[d.key] = valuesOf(d.key).slice() })
     return s
   }
@@ -59,7 +59,7 @@
       var saved = JSON.parse(raw)
       if (!saved || saved.version !== 1) return fallback
       var s = saved.settings || {}
-      var out = { excludeCollab: !!s.excludeCollab, ranknum: s.ranknum }
+      var out = { excludeCollab: !!s.excludeCollab, excludeVariant: !!s.excludeVariant, ranknum: s.ranknum }
       DIMENSIONS.forEach(function (d) {
         var allowed = valuesOf(d.key)
         var picked = (s[d.key] || fallback[d.key]).filter(function (v) { return allowed.indexOf(v) >= 0 })
@@ -107,6 +107,7 @@
         if (s[d.key].indexOf(c[d.key]) < 0) return false
       }
       if (s.excludeCollab && c.collab) return false
+      if (s.excludeVariant && c.variant) return false
       return true
     })
   }
@@ -164,6 +165,14 @@
       }).join('、') + '；勾选后这些不参与测试'
       : '联动角色'
 
+    var variantCount = CHARS.filter(function (c) { return c.variant }).length
+    var variantSample = CHARS.filter(function (c) { return c.variant }).slice(0, 4)
+      .map(function (c) { return c.name }).join('、')
+    var variantTip = variantCount
+      ? '同名换皮版本 ' + variantCount + ' 名（如 ' + variantSample + ' 等）；' +
+        '勾选后只保留本体，参测 ' + CHARS.filter(function (c) { return !c.variant }).length + ' 名'
+      : '同名换皮版本'
+
     var rankItems = RANK_OPTIONS.filter(function (n) { return n <= pool.length || !pool.length })
       .map(function (n) {
         return '<li class="inline short"><label class="radio' + (s.ranknum === n ? ' checked' : '') + '">' +
@@ -182,12 +191,20 @@
 
       '  <div class="section">' +
       '    <p class="list"><span>其他选项：</span>' +
-      '      <ul class="inline-list"><li class="inline long">' +
+      '      <ul class="inline-list">' +
+      '      <li class="inline long">' +
+      '        <label class="checkbox' + (s.excludeVariant ? ' checked' : '') + '" title="' + esc(variantTip) + '">' +
+      '          <span class="box"></span><input type="checkbox" data-exclude-variant="1"' +
+      (s.excludeVariant ? ' checked' : '') + '>' +
+      '          <span class="label">去除异格角色</span><span class="count">' + variantCount + '</span></label>' +
+      '      </li>' +
+      '      <li class="inline long">' +
       '        <label class="checkbox' + (s.excludeCollab ? ' checked' : '') + '" title="' + esc(collabTip) + '">' +
       '          <span class="box"></span><input type="checkbox" data-exclude-collab="1"' +
       (s.excludeCollab ? ' checked' : '') + '>' +
       '          <span class="label">去除联动角色</span><span class="count">' + collabCount + '</span></label>' +
-      '      </li></ul>' +
+      '      </li>' +
+      '      </ul>' +
       '    </p>' +
       '    <p class="comment">已选择 <b class="emphasize">' + pool.length + '</b> 名角色参与测试' +
       (pool.length ? '' : '（请至少在每个维度里勾选一项）') + '</p>' +
@@ -507,6 +524,10 @@
       if (t.checked && i < 0) s[dim].push(v)
       if (!t.checked && i >= 0) s[dim].splice(i, 1)
       s[dim].sort(function (a, b) { return valuesOf(dim).indexOf(a) - valuesOf(dim).indexOf(b) })
+      saveSettings(s); renderSettings(); return
+    }
+    if (t.matches('[data-exclude-variant]')) {
+      s.excludeVariant = t.checked
       saveSettings(s); renderSettings(); return
     }
     if (t.matches('[data-exclude-collab]')) {

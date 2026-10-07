@@ -87,6 +87,16 @@ COMPANY_FIX = {"米西利斯（超标准）": "米西利斯", "极乐净土（�
 ELEMENT_FIX = {"雷电": "电击"}     # 妮姬只有 5 种属性，GameKee 该条目用了别名
 CLASS_FIX = {"支援型": "辅助型"}    # 百科筛选器只有 火力/防御/辅助 三类，个别条目写成「支援型」
 
+# 「异格 / 换皮」角色：同名角色的另一个版本（如 阿妮斯：超级巨星、拉毗：小红帽）。
+# 命名规律是「本体名：后缀」，用全角冒号分隔；另有少数特例单列。
+VARIANT_SEP = "："
+VARIANT_BASE_ALIAS = {
+    "安妮": "N102",      # 安妮是 N102 的本名，「安妮：奇迹仙女」的对应本体是 N102
+}
+EXTRA_VARIANTS = {
+    "零 (暂称)": "零",   # 括号写法，本体是 零
+}
+
 
 def log(*a):
     print(*a, flush=True)
@@ -234,8 +244,27 @@ def main():
     cls_order = {"火力型": 0, "防御型": 1, "辅助型": 2}
     chars.sort(key=lambda c: (rarity_order.get(c["rarity"], 9), cls_order.get(c["cls"], 9),
                               c["company"], c["release"], c["name"]))
+
+    # 标记「异格 / 换皮」角色，并把本体名补全
+    all_names = {c["name"] for c in chars}
+    for c in chars:
+        base = ""
+        if VARIANT_SEP in c["name"]:
+            base = c["name"].split(VARIANT_SEP)[0]
+        elif c["name"] in EXTRA_VARIANTS:
+            base = EXTRA_VARIANTS[c["name"]]
+        base = VARIANT_BASE_ALIAS.get(base, base)
+        c["variant"] = bool(base)
+        c["baseName"] = base if base in all_names else ""
+        c["baseNameRaw"] = base
+    # 把本体 id 也挂上，方便结果页/统计引用
     for i, c in enumerate(chars, 1):
         c["id"] = i
+    name_to_id = {c["name"]: c["id"] for c in chars}
+    for c in chars:
+        c["baseId"] = name_to_id.get(c["baseNameRaw"], 0) if c["variant"] else 0
+        if not c["baseId"] and c["variant"]:
+            log("   提示：换皮角色「%s」在库里找不到本体「%s」" % (c["name"], c["baseNameRaw"]))
 
     from collections import Counter
     def group(field, order=None):
@@ -260,6 +289,7 @@ def main():
         },
         "collabSources": [{"name": n, "count": sum(1 for c in chars if c["collabName"] == n)}
                           for n in dict.fromkeys(c["collabName"] for c in chars if c["collab"])],
+        "variantCount": sum(1 for c in chars if c["variant"]),
         "characters": chars,
     }
     # 与明日方舟版保持同样的字段名（app.js / engine.js 直接复用）
@@ -292,6 +322,13 @@ def main():
         "weapon": dict(Counter(c["weapon"] for c in chars)),
         "element": dict(Counter(c["element"] for c in chars)),
         "collab": [{"name": c["name"], "source": c["collabName"]} for c in chars if c["collab"]],
+        "variants": {
+            "count": sum(1 for c in chars if c["variant"]),
+            "baseCount": sum(1 for c in chars if not c["variant"]),
+            "withoutBase": [c["name"] for c in chars if c["variant"] and not c["baseId"]],
+            "list": [{"name": c["name"], "base": c["baseNameRaw"]} for c in chars if c["variant"]],
+            "nameCollision": [n for n, k in Counter(c["name"] for c in chars).items() if k > 1],
+        },
         "normalized": {
             "company": [{"name": c["name"], "raw": c["companyRaw"]} for c in chars if c["overflow"]],
             "element": [{"name": c["name"], "raw": c["elementRaw"]} for c in chars
@@ -316,6 +353,9 @@ def main():
     log("属性：" + "，".join("%s %d" % (g["value"], g["count"]) for g in payload["groups"]["element"]))
     log("联动：%d 名（%s）" % (len(report["collab"]),
         "、".join("%s %d" % (s["name"], s["count"]) for s in payload["collabSources"]) or "无"))
+    log("异格/换皮：%d 名（本体 %d 名，找不到本体的 %d 名）" % (
+        report["variants"]["count"], report["variants"]["baseCount"],
+        len(report["variants"]["withoutBase"])))
     log("缺字段统计：%s" % {k: len(v) for k, v in report["emptyFields"].items()})
     log("已写出 %s" % OUT_DATA)
     return 0
